@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome</title>
+    <link rel="stylesheet" href="wel.css">
+</head>
+<body>
+    <div class="welcome-container">
+        <h1>Welcome back, <span class="username" id="displayUsername"></span>!</h1>
+        <button class="logout-btn" id="logoutBtn">Logout</button>
+    </div>
+
+    <script>
+        // Check if user is authenticated
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            window.location.href = '/login.html';
+        }
+
+        // Fetch user data (you'll need to implement this endpoint in your backend)
+        async function fetchUserData() {
+            try {
+                const response = await fetch('/api/user', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch user data');
+                }
+                
+                const userData = await response.json();
+                document.getElementById('displayUsername').textContent = userData.username;
+            } catch (error) {
+                console.error('Error:', error);
+                window.location.href = '/login.html';
+            }
+        }
+
+        // Logout functionality
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('authToken');
+            window.location.href = '/login.html';
+        });
+
+        // Fetch user data when page loads
+        fetchUserData();
+    </script>
+</body>
+</html>
